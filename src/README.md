@@ -171,7 +171,7 @@ Improved Collaboration: Bridges the gap between backend developers and consumers
 
 ---
 
-## Adding Dynamic Content
+## Adding Dynamic Content ✅
 
 ### Adding the /add endpoint
 
