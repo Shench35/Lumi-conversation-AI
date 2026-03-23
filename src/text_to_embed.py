@@ -16,3 +16,5 @@ def to_embeding(clean_text_result: str, keyword: str):
         collection.add(documents=[text], ids=[keyword])
 
         print("Embedding stored in Chroma")
+        print(text)
+        print(collection)
