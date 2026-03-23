@@ -15,8 +15,10 @@ client = ollama.Client(host="http://127.0.0.1:11434")
 @route.post("/query")
 def query(q: str):
     get_keyword = keyword_getter(q)
-    exixting = collection.get(ids=[get_keyword])
-    if not exixting["documents"]:
+    print(get_keyword)
+    existing = collection.get(ids=[get_keyword])
+    print(existing)
+    if not existing["documents"]:
         result = scrape_wikipedia(get_keyword)
         clean_text_result = clean_text(result["text"])
         to_embeding(clean_text_result, get_keyword)
