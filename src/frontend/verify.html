@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ORBITAL — Account Verification</title>
+  <title>ORBITAL — OTP Verification</title>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -14,7 +14,6 @@
       --accent:    #00d4ff;
       --accent2:   #ff4500;
       --green:     #00ff88;
-      --yellow:    #ffd700;
       --muted:     #3a5070;
       --text:      #c8dff0;
       --text-dim:  #5a7a9a;
@@ -34,7 +33,6 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      position: relative;
     }
 
     canvas#stars {
@@ -60,22 +58,18 @@
     }
     @keyframes scan { 0% { top: 0; } 100% { top: 100vh; } }
 
-    /* CENTER CARD */
     .card {
       position: relative; z-index: 10;
-      width: min(480px, 92vw);
+      width: min(460px, 92vw);
       background: var(--surface);
       border: 1px solid var(--border);
       clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 28px, 100% 100%, 28px 100%, 0 calc(100% - 28px));
       animation: fadeUp .7s ease both;
-      overflow: hidden;
     }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
-    /* corner deco */
     .card::before, .card::after {
       content: ''; position: absolute;
       width: 16px; height: 16px;
@@ -91,10 +85,8 @@
       border-left: 1px solid var(--accent);
     }
 
-    /* TOP BAR */
     .top-bar {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
       padding: 14px 28px;
       border-bottom: 1px solid var(--border);
@@ -107,172 +99,182 @@
     }
     .brand span { color: var(--accent); }
     .status-pill {
+      display: flex; align-items: center; gap: 6px;
       font-family: var(--font-mono);
-      font-size: 9px; color: var(--text-dim);
-      letter-spacing: 2px;
+      font-size: 9px; color: var(--green); letter-spacing: 2px;
     }
+    .status-pill::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
 
-    /* BODY */
-    .card-body {
-      padding: 52px 44px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 0;
-    }
-
-    /* ICON RING */
-    .icon-ring {
-      width: 90px; height: 90px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 36px;
-      margin-bottom: 32px;
-      position: relative;
-      transition: border-color .4s, box-shadow .4s;
-    }
-    .icon-ring.loading {
-      border-color: var(--accent);
-      box-shadow: 0 0 20px rgba(0,212,255,.2);
-      animation: spin-ring 2s linear infinite;
-    }
-    .icon-ring.success {
-      border-color: var(--green);
-      box-shadow: 0 0 24px rgba(0,255,136,.25);
-    }
-    .icon-ring.error {
-      border-color: var(--accent2);
-      box-shadow: 0 0 24px rgba(255,69,0,.25);
-    }
-    .icon-ring.warn {
-      border-color: var(--yellow);
-      box-shadow: 0 0 24px rgba(255,215,0,.2);
-    }
-    @keyframes spin-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(0,212,255,.4); }
-      50%  { box-shadow: 0 0 28px 4px rgba(0,212,255,.15); }
-      100% { box-shadow: 0 0 0 0 rgba(0,212,255,.4); }
-    }
-
-    /* orbit dot that spins around the ring while loading */
-    .orbit-dot {
-      position: absolute;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      top: -4px; left: calc(50% - 4px);
-      transform-origin: 4px 49px;
-      animation: orbit 1.2s linear infinite;
-      display: none;
-    }
-    .icon-ring.loading .orbit-dot { display: block; }
-    @keyframes orbit { to { transform: rotate(360deg); } }
+    .card-body { padding: 44px 44px 40px; }
 
     .eyebrow {
       font-family: var(--font-mono);
       font-size: 9px; color: var(--accent);
-      letter-spacing: 4px; text-transform: uppercase;
-      margin-bottom: 10px;
+      letter-spacing: 4px; margin-bottom: 8px;
     }
-
     h1 {
       font-family: var(--font-head);
       font-size: 20px; font-weight: 900;
-      color: #fff; line-height: 1.1;
-      margin-bottom: 14px;
-      transition: color .3s;
+      color: #fff; margin-bottom: 10px;
     }
-    h1.success { color: var(--green); }
-    h1.error   { color: var(--accent2); }
-    h1.warn    { color: var(--yellow); }
-
-    .message {
+    .subtitle {
       font-family: var(--font-mono);
       font-size: 11px; color: var(--text-dim);
-      line-height: 1.7; max-width: 320px;
-      margin-bottom: 36px;
+      line-height: 1.7; margin-bottom: 36px;
     }
+    .subtitle strong { color: var(--accent); }
 
-    /* PROGRESS BAR (loading state) */
-    .progress-wrap {
-      width: 100%;
-      height: 2px;
-      background: var(--border);
-      margin-bottom: 36px;
-      display: none;
-      overflow: hidden;
+    .form-group {
+      display: flex; flex-direction: column; gap: 7px;
+      margin-bottom: 28px;
     }
-    .progress-wrap.show { display: block; }
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      width: 40%;
-      animation: progress-slide 1.2s ease-in-out infinite;
+    label {
+      font-family: var(--font-mono);
+      font-size: 9px; letter-spacing: 3px;
+      color: var(--text-dim); text-transform: uppercase;
     }
-    @keyframes progress-slide {
-      0%   { transform: translateX(-200%); }
-      100% { transform: translateX(350%); }
+    .input-wrap { position: relative; }
+    .input-wrap .icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted); font-size: 13px; pointer-events: none;
     }
-
-    /* LOG LINES */
-    .log-box {
+    .input-wrap input {
       width: 100%;
       background: var(--panel);
       border: 1px solid var(--border);
-      padding: 14px 16px;
-      margin-bottom: 32px;
-      text-align: left;
-      display: none;
-    }
-    .log-box.show { display: block; }
-    .log-line {
+      color: var(--text);
       font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-dim);
-      line-height: 1.8;
-      opacity: 0;
-      animation: logFade .3s ease forwards;
+      font-size: 12px;
+      padding: 11px 14px 11px 38px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .log-line.ok   { color: var(--green); }
-    .log-line.err  { color: var(--accent2); }
-    .log-line.warn { color: var(--yellow); }
-    @keyframes logFade { to { opacity: 1; } }
+    .input-wrap input::placeholder { color: var(--muted); }
+    .input-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), inset 0 0 12px rgba(0,212,255,.05);
+    }
 
-    /* ACTION BUTTON */
-    .btn {
+    .otp-label {
+      font-family: var(--font-mono);
+      font-size: 9px; letter-spacing: 3px;
+      color: var(--text-dim); text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .otp-boxes {
+      display: flex; gap: 8px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .otp-box {
+      width: 52px; height: 60px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid var(--muted);
+      color: var(--accent);
       font-family: var(--font-head);
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 3px; text-transform: uppercase;
-      padding: 13px 32px;
+      font-size: 28px; font-weight: 700;
+      text-align: center; outline: none;
+      transition: border-color .2s, color .2s;
+      caret-color: transparent;
+    }
+    .otp-box:focus {
+      border-bottom-color: var(--accent);
+      color: #fff;
+    }
+    .otp-box.filled {
+      border-bottom-color: var(--accent);
+      color: var(--accent);
+    }
+    .otp-box.error-box {
+      border-bottom-color: var(--accent2);
+      color: var(--accent2);
+      animation: shake .3s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
+
+    .timer-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px; margin-top: 8px;
+    }
+    .timer {
+      font-family: var(--font-mono);
+      font-size: 10px; color: var(--text-dim);
+    }
+    .timer strong { color: var(--accent); }
+    .timer.expiring strong { color: var(--accent2); }
+    .resend-btn {
+      font-family: var(--font-mono);
+      font-size: 10px; color: var(--text-dim);
+      background: none; border: none;
+      cursor: pointer; letter-spacing: 1px;
+      transition: color .2s;
+    }
+    .resend-btn:not(:disabled):hover { color: var(--accent); }
+    .resend-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    .error-msg {
+      font-family: var(--font-mono);
+      font-size: 10px; color: var(--accent2);
+      min-height: 16px; margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .btn-launch {
+      width: 100%;
+      background: transparent;
       border: 1px solid var(--accent);
       color: var(--accent);
-      background: transparent;
-      cursor: pointer;
+      font-family: var(--font-head);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 4px; text-transform: uppercase;
+      padding: 15px; cursor: pointer;
       position: relative; overflow: hidden;
       transition: color .3s;
-      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-      text-decoration: none;
-      display: inline-block;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      margin-bottom: 20px;
     }
-    .btn::before {
-      content: '';
-      position: absolute; inset: 0;
+    .btn-launch::before {
+      content: ''; position: absolute; inset: 0;
       background: var(--accent);
       transform: translateX(-101%);
-      transition: transform .3s ease;
-      z-index: 0;
+      transition: transform .35s ease; z-index: 0;
     }
-    .btn:hover::before { transform: translateX(0); }
-    .btn:hover { color: var(--bg); }
-    .btn span { position: relative; z-index: 1; }
-    .btn.hidden { display: none; }
-    .btn.green-btn {
-      border-color: var(--green); color: var(--green);
+    .btn-launch:hover::before { transform: translateX(0); }
+    .btn-launch:hover { color: var(--bg); }
+    .btn-launch span { position: relative; z-index: 1; }
+    .btn-launch:disabled { opacity: .4; cursor: not-allowed; }
+
+    .login-link {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 10px; color: var(--text-dim);
     }
-    .btn.green-btn::before { background: var(--green); }
-    .btn.green-btn:hover { color: var(--bg); }
+    .login-link a { color: var(--accent); text-decoration: none; }
+
+    .toast {
+      position: fixed; bottom: 32px; right: 32px;
+      padding: 14px 20px;
+      font-family: var(--font-mono); font-size: 11px;
+      border-left: 3px solid var(--green);
+      background: var(--panel); color: var(--green);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+      z-index: 100; pointer-events: none;
+    }
+    .toast.error { border-color: var(--accent2); color: var(--accent2); }
+    .toast.show  { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -284,52 +286,66 @@
 <div class="card">
   <div class="top-bar">
     <div class="brand">ORBI<span>TAL</span></div>
-    <div class="status-pill">VERIFICATION TERMINAL</div>
+    <div class="status-pill">OTP TERMINAL</div>
   </div>
 
   <div class="card-body">
-
-    <div class="icon-ring loading" id="iconRing">
-      <div class="orbit-dot"></div>
-      <span id="iconEmoji">🛰️</span>
-    </div>
-
-    <div class="eyebrow">// Identity Check</div>
-    <h1 id="title">VERIFYING CREDENTIALS</h1>
-    <p class="message" id="message">
-      Authenticating your access token against mission control records. Stand by…
+    <div class="eyebrow">// Identity Verification</div>
+    <h1>ENTER ACCESS CODE</h1>
+    <p class="subtitle">
+      A 6-digit verification code was sent to<br>
+      <strong id="emailDisplay">your registered email</strong>.
     </p>
 
-    <div class="progress-wrap show" id="progressWrap">
-      <div class="progress-bar"></div>
+    <div class="form-group">
+      <label for="emailInput">Email Address</label>
+      <div class="input-wrap">
+        <span class="icon">@</span>
+        <input type="email" id="emailInput" placeholder="crew@orbital.space" />
+      </div>
     </div>
 
-    <div class="log-box" id="logBox"></div>
+    <div class="otp-label">Verification Code</div>
+    <div class="otp-boxes">
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o1" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o2" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o3" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o4" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o5" />
+      <input class="otp-box" type="text" maxlength="1" inputmode="numeric" id="o6" />
+    </div>
 
-    <a href="login.html" class="btn hidden" id="actionBtn">
-      <span id="actionText">PROCEED TO LOGIN</span>
-    </a>
+    <div class="timer-row">
+      <div class="timer" id="timerDisplay">
+        Expires in <strong id="timerCount">10:00</strong>
+      </div>
+      <button class="resend-btn" id="resendBtn" disabled>RESEND CODE</button>
+    </div>
 
+    <div class="error-msg" id="errorMsg"></div>
+
+    <button class="btn-launch" id="submitBtn">
+      <span id="btnText">VERIFY IDENTITY</span>
+    </button>
+
+    <div class="login-link">
+      Wrong account? <a href="login.html">Sign in instead →</a>
+    </div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
   /* STARFIELD */
   const canvas = document.getElementById('stars');
   const ctx    = canvas.getContext('2d');
   let stars    = [];
-
-  function resizeCanvas() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   function initStars() {
     stars = Array.from({ length: 180 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.2 + .2,
-      o: Math.random(),
-      s: Math.random() * .004 + .002
+      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+      r: Math.random() * 1.2 + .2, o: Math.random(), s: Math.random() * .004 + .002
     }));
   }
   function drawStars() {
@@ -337,117 +353,139 @@
     stars.forEach(st => {
       st.o += st.s;
       if (st.o > 1 || st.o < 0) st.s *= -1;
-      ctx.beginPath();
-      ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(180,220,255,${st.o})`;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(180,220,255,${st.o})`; ctx.fill();
     });
     requestAnimationFrame(drawStars);
   }
   resizeCanvas(); initStars(); drawStars();
   window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
 
-  /* LOG HELPER */
-  function addLog(text, type = '') {
-    const logBox = document.getElementById('logBox');
-    logBox.classList.add('show');
-    const line = document.createElement('div');
-    line.className = `log-line ${type}`;
-    line.style.animationDelay = '0s';
-    line.textContent = text;
-    logBox.appendChild(line);
+  /* PRE-FILL EMAIL FROM URL */
+  const params = new URLSearchParams(window.location.search);
+  const emailFromUrl = params.get('email');
+  if (emailFromUrl) {
+    document.getElementById('emailInput').value = emailFromUrl;
+    document.getElementById('emailDisplay').textContent = emailFromUrl;
   }
 
-  /* STATE HELPERS */
-  function setSuccess() {
-    document.getElementById('iconRing').className  = 'icon-ring success';
-    document.getElementById('iconEmoji').textContent = '✓';
-    document.getElementById('title').textContent   = 'ACCESS GRANTED';
-    document.getElementById('title').className     = 'success';
-    document.getElementById('message').textContent = 'Your identity has been confirmed. You are cleared for mission operations.';
-    document.getElementById('progressWrap').classList.remove('show');
-    const btn = document.getElementById('actionBtn');
-    btn.classList.remove('hidden');
-    btn.classList.add('green-btn');
-    document.getElementById('actionText').textContent = 'PROCEED TO LOGIN';
-    btn.href = 'login.html';
+  /* OTP BOX NAVIGATION */
+  const boxes = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id));
+
+  boxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/\D/g, '');
+      if (box.value) {
+        box.classList.add('filled');
+        if (i < 5) boxes[i + 1].focus();
+      } else {
+        box.classList.remove('filled');
+      }
+      clearError();
+    });
+
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !box.value && i > 0) {
+        boxes[i - 1].focus();
+        boxes[i - 1].value = '';
+        boxes[i - 1].classList.remove('filled');
+      }
+    });
+
+    box.addEventListener('paste', e => {
+      e.preventDefault();
+      const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((char, idx) => {
+        if (boxes[idx]) { boxes[idx].value = char; boxes[idx].classList.add('filled'); }
+      });
+      const nextEmpty = boxes.findIndex(b => !b.value);
+      if (nextEmpty !== -1) boxes[nextEmpty].focus(); else boxes[5].focus();
+    });
+  });
+
+  function getOTP() { return boxes.map(b => b.value).join(''); }
+
+  function shakeBoxes() {
+    boxes.forEach(b => {
+      b.classList.add('error-box');
+      setTimeout(() => b.classList.remove('error-box'), 400);
+    });
   }
 
-  function setError(detail) {
-    document.getElementById('iconRing').className  = 'icon-ring error';
-    document.getElementById('iconEmoji').textContent = '✕';
-    document.getElementById('title').textContent   = 'VERIFICATION FAILED';
-    document.getElementById('title').className     = 'error';
-    document.getElementById('message').textContent = detail || 'An unknown error occurred. Contact mission support.';
-    document.getElementById('progressWrap').classList.remove('show');
-    const btn = document.getElementById('actionBtn');
-    btn.classList.remove('hidden');
-    document.getElementById('actionText').textContent = 'BACK TO REGISTER';
-    btn.href = '/create_acc.html';
+  function clearError() { document.getElementById('errorMsg').textContent = ''; }
+
+  /* COUNTDOWN — 10 minutes */
+  let secondsLeft = 600;
+  const timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+    const s = String(secondsLeft % 60).padStart(2, '0');
+    document.getElementById('timerCount').textContent = `${m}:${s}`;
+    if (secondsLeft <= 60) document.getElementById('timerDisplay').classList.add('expiring');
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById('timerCount').textContent = 'EXPIRED';
+      document.getElementById('resendBtn').disabled = false;
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('errorMsg').textContent = '[ EXPIRED ] Code has expired. Request a new one.';
+    }
+  }, 1000);
+
+  /* TOAST */
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => { t.className = 'toast'; }, 3500);
   }
 
-  function setAlreadyVerified() {
-    document.getElementById('iconRing').className  = 'icon-ring warn';
-    document.getElementById('iconEmoji').textContent = '⚠';
-    document.getElementById('title').textContent   = 'ALREADY VERIFIED';
-    document.getElementById('title').className     = 'warn';
-    document.getElementById('message').textContent = 'This account has already been cleared for access. Proceed to login.';
-    document.getElementById('progressWrap').classList.remove('show');
-    const btn = document.getElementById('actionBtn');
-    btn.classList.remove('hidden');
-    document.getElementById('actionText').textContent = 'GO TO LOGIN';
-    btn.href = '/login.html';
-  }
+  /* SUBMIT */
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const email = document.getElementById('emailInput').value.trim();
+    const otp   = getOTP();
 
-  /* MAIN — read token from URL and verify */
-  async function verifyToken() {
-    const params = new URLSearchParams(window.location.search);
-    const token  = params.get('token');
-
-    if (!token) {
-      addLog('[ ERR ] No token found in URL.', 'err');
-      setError('No verification token was provided. Please use the link from your email.');
+    if (!email) {
+      document.getElementById('errorMsg').textContent = '[ ERROR ] Email address is required.';
       return;
     }
+    if (otp.length < 6) {
+      document.getElementById('errorMsg').textContent = '[ ERROR ] Enter all 6 digits.';
+      shakeBoxes(); return;
+    }
 
-    addLog('[ ... ] Token detected. Initiating handshake…');
-
-    // small delay so the loading state is visible
-    await new Promise(r => setTimeout(r, 800));
-    addLog('[ ... ] Contacting auth server…');
+    const btn     = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    btn.disabled  = true;
+    btnText.textContent = 'VERIFYING···';
 
     try {
-      const response = await fetch(`http://localhost:8000/auth/verify/${token}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+      const response = await fetch('http://localhost:8000/auth/verify-otp', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.sttheringify({ email, otp })
       });
 
       const data = await response.json();
 
-      await new Promise(r => setTimeout(r, 500));
-
-      if (response.ok) {
-        if (data.message === 'Account already verified.') {
-          addLog('[ WARN ] Account already verified.', 'warn');
-          setAlreadyVerified();
-        } else {
-          addLog('[ OK ] Token valid. Identity confirmed.', 'ok');
-          addLog('[ OK ] is_verified flag updated in database.', 'ok');
-          addLog('[ OK ] Clearance level assigned: CADET.', 'ok');
-          setSuccess();
-        }
-      } else {
-        addLog(`[ ERR ] ${data.detail}`, 'err');
-        setError(data.detail);
+      if (!response.ok) {
+        shakeBoxes();
+        document.getElementById('errorMsg').textContent = `[ DENIED ] ${data.detail}`;
+        btn.disabled = false;
+        btnText.textContent = 'VERIFY IDENTITY';
+        return;
       }
 
-    } catch (err) {
-      addLog('[ ERR ] Could not reach auth server.', 'err');
-      setError('Unable to connect to mission control. Check your connection and try again.');
-    }
-  }
+      clearInterval(timerInterval);
+      showToast('[ AUTHORIZED ] Identity confirmed. Redirecting…');
+      setTimeout(() => window.location.href = 'login.html', 2000);
 
-  verifyToken();
+    } catch (err) {
+      document.getElementById('errorMsg').textContent = '[ ERROR ] Could not reach auth server.';
+      btn.disabled = false;
+      btnText.textContent = 'VERIFY IDENTITY';
+    }
+  });
+
+  boxes[0].focus();
 </script>
 </body>
 </html>

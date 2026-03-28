@@ -535,7 +535,7 @@
     btnText.textContent = 'AUTHENTICATING···';
 
     try {
-      const response = await fetch('http://localhost:8000/auth/Login', {
+      const response = await fetch('http://localhost:8000/auth/login', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -549,9 +549,9 @@
       }
 
       // store token if returned
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
-      }
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('refresh_token', data.refresh_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
 
       showToast('[ AUTHORIZED ] Access granted. Launching…');
       setTimeout(() => window.location.href = 'index.html', 2000);
