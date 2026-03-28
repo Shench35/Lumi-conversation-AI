@@ -7,6 +7,9 @@ from passlib.context import CryptContext
 
 from src.app.config import Config
 
+from itsdangerous import URLSafeTimedSerializer
+from src.app.config import Config
+
 password_context = CryptContext(schemes=["argon2"])
 
 
@@ -45,3 +48,17 @@ def decode_token(token: str) -> dict:
     except jwt.PyJWTError as e:
         logging.exception(e)
         return None
+
+
+
+serializer = URLSafeTimedSerializer(
+    secret_key=Config.SECRET_KEY,
+    salt="email-verification"
+)
+
+def create_verification_token(email: str) -> str:
+    return serializer.dumps(email)
+
+def decode_verification_token(token: str, max_age: int = 3600) -> str:
+    """Decodes token. Raises exception if expired or invalid."""
+    return serializer.loads(token, max_age=max_age)

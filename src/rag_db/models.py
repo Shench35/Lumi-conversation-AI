@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import Column, TypeDecorator, func
 from sqlalchemy.dialects import mysql
 from sqlmodel import Field, SQLModel
-
+from src.auth.utils import verify_password
 
 
 class GUID(TypeDecorator):
@@ -43,7 +43,11 @@ class User(SQLModel, table=True):
     password_hash: str = Field(exclude=True)
     created_at: datetime = Field(sa_column=Column(mysql.TIMESTAMP, default=func.now()))
     updated_at: datetime = Field(sa_column=Column(mysql.TIMESTAMP, default=func.now()))
+    
 
     def __repr__(self):
         return f"<Book {self.username}>"
+    
+    def verify_password(self, password: str) -> bool:
+        return verify_password(password, self.password_hash)
 
