@@ -16,3 +16,7 @@ class CreateUserModel(BaseModel):
 
 class EmailModel(BaseModel):
     addresses : List[str]
+
+class VerifyOTPModel(BaseModel):
+    email: str
+    otp: str
