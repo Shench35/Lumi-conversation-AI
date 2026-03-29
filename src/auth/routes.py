@@ -27,9 +27,8 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
     if user_exists:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User already exist")
 
-    new_user = await service.create_account(user_data, session)
-
-    otp = service.generate_otp(email)
+    # Generate OTP and store user data temporarily
+    otp = service.generate_otp(email, user_data=user_data)
 
     html = f"""
     <!DOCTYPE html>
@@ -133,7 +132,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
                 <div class="status">MISSION ACCESS SYSTEM</div>
             </div>
             
-            <h1>Welcome, {new_user.first_name}!</h1>
+            <h1>Welcome, {user_data.first_name}!</h1>
             
             <div class="message">
                 Your ORBITAL account has been created successfully. Your mission access code is below:
@@ -161,8 +160,9 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
     </html>
     """
 
+    print(user_data.email)
     message = create_message(
-        recipients=[new_user.email],
+        recipients=[user_data.email],
         subject="Verify your ORBITAL account",
         body=html
     )
@@ -173,24 +173,24 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
 
 @auth_router.post("/verify-otp")
 async def verify_otp(otp_data: VerifyOTPModel, session: AsyncSession = Depends(get_session)):
-    """Verify user with OTP"""
+    """Verify user with OTP and create account in database"""
     email = otp_data.email
     otp = otp_data.otp
+    print(otp_data)
     
     is_valid, message = service.verify_otp_input(email, otp)
     
     if not is_valid:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     
-    user = await service.get_user_by_email(email, session)
+    # Retrieve the stored user data
+    stored_user_data = service.get_stored_user_data(email)
     
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    if not stored_user_data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User data not found. Please register again.")
     
-    if user.is_verified:
-        return {"message": "Account already verified."}
-    
-    await service.verify_user(user, session)
+    # Create user account in database only after successful OTP verification
+    new_user = await service.create_account(stored_user_data, session)
     
     return {"message": "Account verified successfully."}
 
