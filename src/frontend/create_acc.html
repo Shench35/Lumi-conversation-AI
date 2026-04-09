@@ -1,524 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ORBITAL — Personnel Registration</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <title>Lumi — Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg:        #050810;
-      --surface:   #0a0f1e;
-      --panel:     #0d1526;
-      --border:    #1a2a4a;
-      --accent:    #00d4ff;
-      --accent2:   #ff4500;
-      --green:     #00ff88;
-      --muted:     #3a5070;
-      --text:      #c8dff0;
-      --text-dim:  #5a7a9a;
-      --font-mono: 'Share Tech Mono', monospace;
-      --font-head: 'Orbitron', sans-serif;
-      --font-body: 'Exo 2', sans-serif;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --cream:#fdf8f2;--warm:#f5ede0;--peach:#f4a87c;--coral:#e8725a;
+      --plum:#3d2a4e;--grape:#6b4c8a;--lavender:#c4aee0;--mint:#7ecfb3;
+      --text:#2d1f3d;--text-mid:#7a6690;--text-dim:#b8a8cc;
+      --ff-head:'Fraunces',serif;--ff-body:'Nunito',sans-serif;
     }
+    body{background:var(--cream);color:var(--text);font-family:var(--ff-body);min-height:100vh;display:flex;align-items:stretch}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    canvas#stars {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .grid-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      background-image:
-        linear-gradient(rgba(0,212,255,.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-    }
-
-    .rocket-bg {
-      position: fixed;
-      right: -60px;
-      bottom: -40px;
-      width: 420px;
-      opacity: .04;
-      z-index: 1;
-      pointer-events: none;
-      animation: rocketFloat 8s ease-in-out infinite;
-    }
-    @keyframes rocketFloat {
-      0%,100% { transform: translateY(0) rotate(-5deg); }
-      50%      { transform: translateY(-20px) rotate(-5deg); }
-    }
-
-    .scanline {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: .25;
-      z-index: 2;
-      animation: scan 6s linear infinite;
-    }
-    @keyframes scan {
-      0%   { top: 0; }
-      100% { top: 100vh; }
-    }
-
-    .wrapper {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      gap: 0;
-      width: min(920px, 95vw);
-      animation: fadeUp .8s ease both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .blob-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.12;animation:blobFloat 12s ease-in-out infinite}
+    .blob-1{width:500px;height:500px;background:var(--peach);top:-150px;left:-100px}
+    .blob-2{width:400px;height:400px;background:var(--lavender);bottom:-100px;right:-100px;animation-delay:-6s}
+    @keyframes blobFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-15px)}}
 
     /* LEFT PANEL */
-    .left-panel {
-      width: 220px;
-      flex-shrink: 0;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-right: none;
-      padding: 32px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+    .left-panel{
+      position:relative;z-index:1;
+      width:420px;flex-shrink:0;
+      background:var(--plum);
+      display:flex;flex-direction:column;justify-content:center;
+      padding:60px 48px;
+      overflow:hidden;
     }
+    .left-panel::before{
+      content:'';position:absolute;
+      width:400px;height:400px;border-radius:50%;
+      background:rgba(255,255,255,.04);
+      top:-100px;right:-150px;
+    }
+    .left-panel::after{
+      content:'';position:absolute;
+      width:300px;height:300px;border-radius:50%;
+      background:rgba(255,255,255,.04);
+      bottom:-80px;left:-100px;
+    }
+    .lp-logo{font-family:var(--ff-head);font-size:28px;font-weight:700;color:#fff;margin-bottom:48px}
+    .lp-logo span{color:var(--peach)}
+    .lp-title{font-family:var(--ff-head);font-size:36px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:16px}
+    .lp-title em{font-style:italic;color:var(--peach)}
+    .lp-desc{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:40px}
+    .lp-features{display:flex;flex-direction:column;gap:16px}
+    .lp-feature{display:flex;align-items:center;gap:12px}
+    .lp-feature .icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .lp-feature p{font-size:14px;color:rgba(255,255,255,.7)}
 
-    .mission-badge { display: flex; flex-direction: column; gap: 4px; }
-    .mission-badge .label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--accent);
-      letter-spacing: 3px;
-      text-transform: uppercase;
+    /* RIGHT PANEL */
+    .right-panel{
+      position:relative;z-index:1;
+      flex:1;display:flex;align-items:center;justify-content:center;
+      padding:40px 24px;
     }
-    .mission-badge .mission-id {
-      font-family: var(--font-head);
-      font-size: 18px;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1;
-    }
-    .mission-badge .sub {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-dim);
-    }
+    .form-card{width:100%;max-width:440px}
+    .form-card h2{font-family:var(--ff-head);font-size:28px;font-weight:700;color:var(--plum);margin-bottom:8px}
+    .form-card .sub{font-size:15px;color:var(--text-mid);margin-bottom:32px}
+    .form-card .sub a{color:var(--coral);font-weight:700;text-decoration:none}
 
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent);
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+    .form-group label{font-size:13px;font-weight:700;color:var(--text-mid)}
+    .form-group input{
+      padding:12px 16px;border-radius:12px;
+      border:2px solid rgba(61,42,78,.1);
+      background:#fff;color:var(--text);
+      font-family:var(--ff-body);font-size:15px;
+      outline:none;transition:border-color .2s,box-shadow .2s;
     }
+    .form-group input::placeholder{color:var(--text-dim)}
+    .form-group input:focus{border-color:var(--grape);box-shadow:0 0 0 4px rgba(107,76,138,.1)}
+    .form-group input.error{border-color:var(--coral)}
 
-    .status-list { display: flex; flex-direction: column; gap: 12px; }
-    .status-item { display: flex; flex-direction: column; gap: 2px; }
-    .status-item .s-label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-    }
-    .status-item .s-value {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--green);
-    }
-    .status-item .s-value.warn   { color: var(--accent); }
-    .status-item .s-value.danger { color: var(--accent2); }
+    /* PASSWORD STRENGTH */
+    .strength-bars{display:flex;gap:4px;margin-top:6px}
+    .strength-bars span{flex:1;height:3px;border-radius:4px;background:rgba(61,42,78,.1);transition:background .3s}
+    .strength-label{font-size:11px;color:var(--text-dim);margin-top:4px}
 
-    .clearance-box {
-      margin-top: auto;
-      border: 1px solid var(--border);
-      padding: 10px;
-      background: rgba(0,212,255,.04);
-    }
-    .clearance-box .cl-label {
-      font-family: var(--font-mono);
-      font-size: 8px;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-    }
-    .clearance-box .cl-level {
-      font-family: var(--font-head);
-      font-size: 13px;
-      color: var(--accent);
-      margin-top: 4px;
-    }
+    /* TERMS */
+    .terms-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:24px}
+    .terms-row input[type=checkbox]{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--grape);cursor:pointer}
+    .terms-row label{font-size:13px;color:var(--text-mid);line-height:1.5;cursor:pointer}
+    .terms-row label a{color:var(--coral);font-weight:700;text-decoration:none}
 
-    /* MAIN PANEL */
-    .main-panel {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 36px 40px 40px;
-      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
-      position: relative;
+    .btn-submit{
+      width:100%;padding:14px;border-radius:12px;
+      background:var(--coral);color:#fff;
+      font-family:var(--ff-body);font-size:16px;font-weight:800;
+      border:none;cursor:pointer;
+      transition:transform .2s,box-shadow .2s;
+      box-shadow:0 6px 20px rgba(232,114,90,.3);
     }
+    .btn-submit:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(232,114,90,.4)}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-    .main-panel::before, .main-panel::after {
-      content: '';
-      position: absolute;
-      width: 16px; height: 16px;
-    }
-    .main-panel::before {
-      top: 6px; right: 6px;
-      border-top: 1px solid var(--accent);
-      border-right: 1px solid var(--accent);
-    }
-    .main-panel::after {
-      bottom: 6px; left: 6px;
-      border-bottom: 1px solid var(--accent);
-      border-left: 1px solid var(--accent);
-    }
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+    .divider hr{flex:1;border:none;border-top:1px solid rgba(61,42,78,.1)}
+    .divider span{font-size:13px;color:var(--text-dim)}
 
-    .panel-header { margin-bottom: 32px; }
-    .panel-header .eyebrow {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--accent);
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .panel-header h1 {
-      font-family: var(--font-head);
-      font-size: 22px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.1;
-    }
-    .panel-header p {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 6px;
-      font-family: var(--font-mono);
-    }
+    .toast{position:fixed;bottom:28px;right:28px;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:600;opacity:0;transform:translateY(8px);transition:all .3s;z-index:200;pointer-events:none;max-width:320px}
+    .toast.success{background:var(--mint);color:#1a5c45}
+    .toast.error{background:#fde8e4;color:var(--coral)}
+    .toast.show{opacity:1;transform:translateY(0)}
 
-    /* FORM */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px 24px;
-    }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.full { grid-column: 1 / -1; }
-
-    label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 3px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-
-    .input-wrap { position: relative; }
-    .input-wrap .icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 13px;
-      pointer-events: none;
-      transition: color .2s;
-    }
-
-    input, select {
-      width: 100%;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 12px;
-      padding: 10px 12px 10px 36px;
-      outline: none;
-      transition: border-color .2s, box-shadow .2s;
-      appearance: none;
-      -webkit-appearance: none;
-    }
-    select { padding-right: 32px; }
-    input::placeholder { color: var(--muted); }
-
-    input:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent), inset 0 0 12px rgba(0,212,255,.05);
-    }
-
-    .select-arrow {
-      position: absolute;
-      right: 12px;
-      top: 50%; transform: translateY(-50%);
-      color: var(--muted);
-      font-size: 10px;
-      pointer-events: none;
-    }
-
-    .strength-bar { display: flex; gap: 4px; margin-top: 6px; }
-    .strength-bar span { flex: 1; height: 2px; background: var(--border); transition: background .3s; }
-    .strength-label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-dim);
-      margin-top: 3px;
-      min-height: 12px;
-    }
-
-    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
-    .terms-row input[type=checkbox] {
-      width: 16px; height: 16px;
-      flex-shrink: 0;
-      padding: 0 !important;
-      accent-color: var(--accent);
-      cursor: pointer;
-      margin-top: 1px;
-      appearance: auto !important;
-      -webkit-appearance: checkbox !important;
-      background: transparent !important;
-      border: 1px solid var(--muted) !important;
-      box-shadow: none !important;
-    }
-    .terms-row label {
-      font-size: 10px;
-      color: var(--text-dim);
-      letter-spacing: .5px;
-      text-transform: none;
-      line-height: 1.5;
-      cursor: pointer;
-    }
-    .terms-row label a { color: var(--accent); text-decoration: none; }
-
-    .submit-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-top: 28px;
-    }
-
-    .btn-launch {
-      flex: 1;
-      background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      font-family: var(--font-head);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      padding: 14px 24px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      text-transform: uppercase;
-      transition: color .3s;
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    }
-    .btn-launch::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent);
-      transform: translateX(-101%);
-      transition: transform .35s ease;
-      z-index: 0;
-    }
-    .btn-launch:hover::before { transform: translateX(0); }
-    .btn-launch:hover { color: var(--bg); }
-    .btn-launch span { position: relative; z-index: 1; }
-    .btn-launch:disabled { opacity: .4; cursor: not-allowed; }
-
-    .login-link {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-dim);
-      white-space: nowrap;
-    }
-    .login-link a { color: var(--accent); text-decoration: none; }
-
-    .toast {
-      position: fixed;
-      bottom: 32px; right: 32px;
-      padding: 14px 20px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      border-left: 3px solid var(--green);
-      background: var(--panel);
-      color: var(--green);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .3s, transform .3s;
-      z-index: 100;
-      pointer-events: none;
-    }
-    .toast.error { border-color: var(--accent2); color: var(--accent2); }
-    .toast.show  { opacity: 1; transform: translateY(0); }
-
-    @keyframes dots {
-      0%,100% { content: ' ·'; }
-      33%      { content: ' ··'; }
-      66%      { content: ' ···'; }
-    }
+    @media(max-width:900px){.left-panel{display:none} .right-panel{padding:60px 24px}}
   </style>
 </head>
 <body>
+<div class="blob-bg"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
 
-<canvas id="stars"></canvas>
-<div class="grid-overlay"></div>
-<div class="scanline"></div>
-
-<svg class="rocket-bg" viewBox="0 0 200 400" fill="white" xmlns="http://www.w3.org/2000/svg">
-  <path d="M100 0 C100 0 60 60 50 160 L40 200 L60 190 L60 280 L80 300 L80 360 L100 400 L120 360 L120 300 L140 280 L140 190 L160 200 L150 160 C140 60 100 0 100 0Z"/>
-  <rect x="55" y="260" width="90" height="8" rx="2"/>
-  <ellipse cx="100" cy="120" rx="18" ry="18" fill="rgba(0,0,0,.4)"/>
-</svg>
-
-<div class="wrapper">
-  <div class="left-panel">
-    <div class="mission-badge">
-      <span class="label">Mission Control</span>
-      <span class="mission-id">ORBITAL</span>
-      <span class="sub">Personnel Registry v2.4</span>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="status-list">
-      <div class="status-item">
-        <span class="s-label">System Status</span>
-        <span class="s-value">● NOMINAL</span>
-      </div>
-      <div class="status-item">
-        <span class="s-label">Auth Server</span>
-        <span class="s-value">● ONLINE</span>
-      </div>
-      <div class="status-item">
-        <span class="s-label">Launch Window</span>
-        <span class="s-value warn" id="countdown">T-04:32:17</span>
-      </div>
-      <div class="status-item">
-        <span class="s-label">Crew Slots</span>
-        <span class="s-value">12 / 24</span>
-      </div>
-      <div class="status-item">
-        <span class="s-label">Encryption</span>
-        <span class="s-value">AES-256</span>
-      </div>
-    </div>
-
-    <div class="clearance-box">
-      <div class="cl-label">Default Clearance</div>
-      <div class="cl-level">LEVEL 1 — CADET</div>
-    </div>
+<!-- LEFT -->
+<div class="left-panel">
+  <div class="lp-logo">Lumi<span>.</span></div>
+  <div class="lp-title">Join the <em>conversation</em></div>
+  <p class="lp-desc">Create your account and start chatting with Lumi — your AI companion who listens, learns, and actually cares.</p>
+  <div class="lp-features">
+    <div class="lp-feature"><div class="icon">💬</div><p>Real, meaningful conversations</p></div>
+    <div class="lp-feature"><div class="icon">🔒</div><p>Your data is private, always</p></div>
+    <div class="lp-feature"><div class="icon">✨</div><p>Free to start, no credit card</p></div>
   </div>
+</div>
 
-  <div class="main-panel">
-    <div class="panel-header">
-      <div class="eyebrow">// Personnel Registration</div>
-      <h1>CREATE ACCOUNT</h1>
-      <p>Complete all fields to obtain launch authorization.</p>
-    </div>
+<!-- RIGHT -->
+<div class="right-panel">
+  <div class="form-card">
+    <h2>Create your account</h2>
+    <p class="sub">Already have one? <a href="login.html">Sign in instead</a></p>
 
     <form id="registerForm" novalidate>
-      <div class="form-grid">
-
+      <div class="form-row">
         <div class="form-group">
-          <label for="firstName">First Name</label>
-          <div class="input-wrap">
-            <span class="icon">◈</span>
-            <input type="text" id="firstName" placeholder="e.g. Neil" required />
-          </div>
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" placeholder="e.g. Amara" required/>
         </div>
-
         <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <div class="input-wrap">
-            <span class="icon">◈</span>
-            <input type="text" id="lastName" placeholder="e.g. Armstrong" required />
-          </div>
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" placeholder="e.g. Okafor" required/>
         </div>
-
-        <div class="form-group full">
-          <label for="email">Email Address</label>
-          <div class="input-wrap">
-            <span class="icon">@</span>
-            <input type="email" id="email" placeholder="crew@orbital.space" required />
-          </div>
-        </div>
-
-        <div class="form-group full">
-          <label for="username">Username</label>
-          <div class="input-wrap">
-            <span class="icon">⌖</span>
-            <input type="text" id="username" placeholder="e.g. eagle_one" required />
-          </div>
-        </div>
-
-        <div class="form-group full">
-          <label for="password">Password</label>
-          <div class="input-wrap">
-            <span class="icon">⬡</span>
-            <input type="password" id="password" placeholder="Min. 8 characters" required />
-          </div>
-          <div class="strength-bar">
-            <span id="s1"></span><span id="s2"></span>
-            <span id="s3"></span><span id="s4"></span>
-          </div>
-          <div class="strength-label" id="strengthLabel"></div>
-        </div>
-
-        <div class="form-group full">
-          <label for="confirmPassword">Confirm Password</label>
-          <div class="input-wrap">
-            <span class="icon">⬡</span>
-            <input type="password" id="confirmPassword" placeholder="Re-enter password" required />
-          </div>
-        </div>
-
-        <div class="form-group full">
-          <div class="terms-row">
-            <input type="checkbox" id="terms" required />
-            <label for="terms">
-              I acknowledge the <a href="#">Mission Safety Protocol</a> and
-              <a href="#">Data Handling Agreement</a>. Unauthorized access
-              will trigger immediate deauthorization.
-            </label>
-          </div>
-        </div>
-
       </div>
 
-      <div class="submit-row">
-        <button class="btn-launch" id="submitBtn" type="submit">
-          <span id="btnText">INITIALIZE ACCOUNT</span>
-        </button>
-        <div class="login-link">
-          Already crew? <a href="/login.html">Sign in →</a>
-        </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="e.g. amara_ok" required/>
       </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" required/>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="At least 8 characters" required/>
+        <div class="strength-bars">
+          <span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" placeholder="Same password again" required/>
+      </div>
+
+      <div class="terms-row">
+        <input type="checkbox" id="terms" required/>
+        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+      </div>
+
+      <button class="btn-submit" id="submitBtn" type="submit">
+        <span id="btnText">Create my account</span>
+      </button>
     </form>
   </div>
 </div>
@@ -526,133 +183,58 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  /* STARFIELD */
-  const canvas = document.getElementById('stars');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  function initStars() {
-    stars = Array.from({ length: 180 }, () => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.2 + .2,
-      o: Math.random(),
-      s: Math.random() * .005 + .002
-    }));
-  }
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(st => {
-      st.o += st.s;
-      if (st.o > 1 || st.o < 0) st.s *= -1;
-      ctx.beginPath();
-      ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(180,220,255,${st.o})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawStars);
-  }
-  resizeCanvas(); initStars(); drawStars();
-  window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
-
-  /* COUNTDOWN */
-  let totalSeconds = 4 * 3600 + 32 * 60 + 17;
-  function updateCountdown() {
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2,'0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2,'0');
-    const s = String(totalSeconds % 60).padStart(2,'0');
-    document.getElementById('countdown').textContent = `T-${h}:${m}:${s}`;
-    if (totalSeconds > 0) totalSeconds--;
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-
   /* PASSWORD STRENGTH */
-  const bars   = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
-  const colors = ['#ff4500','#ff8c00','#00d4ff','#00ff88'];
-  const labels = ['WEAK','FAIR','STRONG','OPTIMAL'];
-
-  document.getElementById('password').addEventListener('input', function() {
-    const v = this.value;
-    let score = 0;
-    if (v.length >= 8)           score++;
-    if (/[A-Z]/.test(v))        score++;
-    if (/[0-9]/.test(v))        score++;
-    if (/[^A-Za-z0-9]/.test(v)) score++;
-
-    bars.forEach((b, i) => {
-      b.style.background = i < score ? colors[score - 1] : 'var(--border)';
-    });
+  const bars = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+  const colors = ['#e8725a','#f4a87c','#89c4e1','#7ecfb3'];
+  const labels = ['Too weak','Getting there','Strong','Very strong'];
+  document.getElementById('password').addEventListener('input', function(){
+    const v = this.value; let score = 0;
+    if(v.length >= 8) score++;
+    if(/[A-Z]/.test(v)) score++;
+    if(/[0-9]/.test(v)) score++;
+    if(/[^A-Za-z0-9]/.test(v)) score++;
+    bars.forEach((b,i) => b.style.background = i < score ? colors[score-1] : 'rgba(61,42,78,.1)');
     const lbl = document.getElementById('strengthLabel');
-    lbl.textContent = v.length ? `STRENGTH: ${labels[score - 1] || 'VERY WEAK'}` : '';
-    lbl.style.color = score > 0 ? colors[score - 1] : 'var(--text-dim)';
+    lbl.textContent = v.length ? labels[score-1] || 'Too weak' : '';
+    lbl.style.color = score > 0 ? colors[score-1] : 'var(--text-dim)';
   });
 
-  /* TOAST */
-  function showToast(msg, type = 'success') {
+  function showToast(msg, type='success'){
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast ${type} show`;
-    setTimeout(() => { t.className = 'toast'; }, 3500);
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.className = 'toast', 3500);
   }
 
-  /* FORM SUBMIT */
-  document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  document.getElementById('registerForm').addEventListener('submit', async function(e){
     e.preventDefault();
-
-    const firstName       = document.getElementById('firstName').value.trim();
-    const lastName        = document.getElementById('lastName').value.trim();
-    const username        = document.getElementById('username').value.trim();
-    const email           = document.getElementById('email').value.trim();
-    const password        = document.getElementById('password').value;
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const terms           = document.getElementById('terms').checked;
+    const terms = document.getElementById('terms').checked;
 
-    if (!firstName || !lastName || !username || !email || !password) {
-      return showToast('[ ERROR ] All required fields must be completed.', 'error');
-    }
-    if (password !== confirmPassword) {
-      return showToast('[ ERROR ] Password mismatch. Re-enter credentials.', 'error');
-    }
-    if (!terms) {
-      return showToast('[ ERROR ] You must accept the Mission Protocol.', 'error');
-    }
+    if(!firstName||!lastName||!username||!email||!password) return showToast('Please fill in all fields.','error');
+    if(password !== confirmPassword) return showToast('Passwords don\'t match.','error');
+    if(!terms) return showToast('Please accept the terms to continue.','error');
 
-    const btn     = document.getElementById('submitBtn');
+    const btn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');
-    btn.disabled  = true;
-    btnText.textContent = 'INITIALIZING···';
+    btn.disabled = true; btnText.textContent = 'Creating your account...';
 
-    try {
-      const response = await fetch('http://localhost:8000/auth/CreateUser', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          first_name: firstName,
-          last_name:  lastName,
-          username,
-          email,
-          password
-        })
+    try{
+      const res = await fetch('http://localhost:8000/auth/CreateUser',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({first_name:firstName,last_name:lastName,username,email,password})
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Registration failed.');
-      }
-
-      showToast('[ SUCCESS ] Personnel registered. Redirecting…');
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.detail||'Registration failed.');
+      showToast('Account created! Check your email for the verification code. 🎉');
       setTimeout(() => window.location.href = `verify.html?email=${encodeURIComponent(email)}`, 2000);
-
-    } catch (err) {
-      showToast(`[ ABORT ] ${err.message}`, 'error');
-      btn.disabled    = false;
-      btnText.textContent = 'INITIALIZE ACCOUNT';
+    } catch(err){
+      showToast(err.message,'error');
+      btn.disabled = false; btnText.textContent = 'Create my account';
     }
   });
 </script>
