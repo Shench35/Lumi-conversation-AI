@@ -17,6 +17,7 @@ from sqlmodel import select
 from fastapi.exceptions import HTTPException
 from fastapi import status
 from src.auth.services import UserService
+from src.app.RAG_System.pipeline import RAGPipeLine
 
 
 main_route = APIRouter(prefix="/app", tags=["App"])
@@ -27,7 +28,7 @@ client = ollama.Client(host="http://127.0.0.1:11434")
 access_token_bearer = AccessTokenBearer()
 role_checker = RoleChecker(["admin", "user"])
 service = UserService()
-
+rag_pipeline = RAGPipeLine()
 
 
 
@@ -71,40 +72,25 @@ async def query(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Query cannot be empty.")
 
     try:
-        keyword = keyword_getter(q)
+       docs = await rag_pipeline.web_doc_inventory()
 
-        existing = collection.get(ids=[keyword])
-        if not existing["documents"]:
-            result = scrape_wikipedia(keyword)
-            if not result or not result.get("text"):
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Could not find relevant information for your query.")
-            clean_text_result = clean_text(result["text"])
-            to_embeding(clean_text_result, keyword)
+       splits = await rag_pipeline.chunking(docs)
 
-        results = collection.query(query_texts=[q], n_results=1)
-        context = results["documents"][0][0] if results["documents"] else ""
+       retriever = await rag_pipeline.embedding_docs_and_retrival(splits)
 
+       prompt, llm = await rag_pipeline.prompt_template()
 
-        answer = await asyncio.get_event_loop().run_in_executor(
-            None,
-            lambda: client.generate(
-                model="tinyllama",
-                prompt=f"Context:\n{context}\n\nQuestion: {q}\n\nAnswer clearly and concisely:"
-            )
-        )
-
-        log = QueryLog(
-            user_id=user.uid,
-            query=q,
-            response=answer["response"]
-        )
-        session.add(log)
-        await session.commit()
-
-        return {
-            "answer": answer["response"],
-            "keyword": keyword
-        }
+       answer = await rag_pipeline.rag_chain(docs, retriever, prompt, llm, q)
+       log = QueryLog(
+           user_id=user.uid,
+           query=q,
+           response=answer["response"]
+           )
+       session.add(log)
+       await session.commit()
+       return {
+           "answer": answer["response"]
+             }
 
     except HTTPException:
         raise
