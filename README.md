@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # RAG Project: Intelligent Web-Augmented Conversation System
 
 An advanced Retrieval-Augmented Generation (RAG) system built with FastAPI, LangChain, and Google Gemini. This application transforms static web content into a dynamic knowledge base, allowing users to have context-aware conversations powered by real-time data retrieval.
