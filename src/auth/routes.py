@@ -341,7 +341,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
     print(user_exists.email)
     message = create_message(
         recipients=[user_exists.email],
-        subject="Verify your ORBITAL account",
+        subject="Verify your LUMI account",
         body=html
     )
     await mail.send_message(message)
