@@ -4,9 +4,6 @@ import ollama
 import asyncio
 import os
 
-from src.app.services.get_keyword import keyword_getter
-from src.app.services.emb_scraper import clean_text, scrape_wikipedia
-from src.app.services.text_to_embed import to_embeding
 from src.app.services.schemas import QueryRequest
 
 from sqlmodel.ext.asyncio.session import AsyncSession
