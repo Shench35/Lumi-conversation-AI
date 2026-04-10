@@ -41,7 +41,7 @@ app.add_middleware(
 # Serve frontend static files
 app.mount("/static", StaticFiles(directory="src/frontend"), name="static")
 
-@app.get("/home")
+@app.get("/")
 async def landing():
     return FileResponse("src/frontend/index.html")
 
