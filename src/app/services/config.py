@@ -11,9 +11,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str
 
 
-    REDIS_HOST:str
-    REDIS_PORT:int
-    REDIS_PASSWORD:str
+    REDIS_HOST:str = "redis-cli -u redis://default:B9ujmvhje3YsekKLHpulDIAXyRkvir9N@redis-12673.c259.us-central1-2.gce.cloud.redislabs.com"
+    REDIS_PORT:int = 12673
+    REDIS_PASSWORD:str = "B9ujmvhje3YsekKLHpulDIAXyRkvir9N"
 
 
     MAIL_USERNAME:str
