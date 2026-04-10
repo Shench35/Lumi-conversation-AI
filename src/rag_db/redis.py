@@ -6,6 +6,7 @@ JTI_EXPIRY = 3360
 token_blocklist = aioredis.StrictRedis(
     host=Config.REDIS_HOST,
     port=Config.REDIS_PORT,
+    password=Config.REDIS_PASSWORD,
     db=0,
     decode_responses=True,
     socket_connect_timeout=5,  # Add timeout
