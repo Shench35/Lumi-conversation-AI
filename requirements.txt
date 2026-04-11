@@ -27,5 +27,5 @@ googlesearch-python==1.2.3
 yfinance==0.2.40
 google-generativeai==0.5.4
 huggingface-hub==0.23.2
-pymysql
-aiomysql
+psycopg2-binary
+asyncpg
