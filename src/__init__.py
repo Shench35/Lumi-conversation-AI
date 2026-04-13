@@ -18,8 +18,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
-
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
@@ -36,14 +34,18 @@ app.add_middleware(
 )
 
 # Serve frontend static files
-# We'll serve from the root so links like "login.html" work naturally
 app.mount("/static", StaticFiles(directory="src/frontend"), name="static")
 
 @app.get("/")
 async def landing():
     return FileResponse("src/frontend/index.html")
 
-# Fix: Serve specific frontend pages at the root level so relative links work
+# Explicit admin route
+@app.get("/admin.html")
+async def admin_page():
+    return FileResponse("src/frontend/admin.html")
+
+# Catch-all for other HTML pages
 @app.get("/{page_name}.html")
 async def get_page(page_name: str):
     file_path = f"src/frontend/{page_name}.html"
