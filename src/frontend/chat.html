@@ -220,6 +220,7 @@
   /* HISTORY */
   let historyItems = [];
   let queryCount = 0;
+  let currentSessionId = null; // New: Track the current session
 
   function addToHistory(q){
     const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
@@ -280,11 +281,20 @@
       const res = await authFetch('http://localhost:8000/app/query',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({q})
+        body:JSON.stringify({
+          q: q,
+          session_id: currentSessionId // Send existing session ID if we have one
+        })
       });
       const data = await res.json();
       removeTyping();
       if(!res.ok){ addLumiMsg(data.detail||'Something went wrong. Try again?'); return; }
+      
+      // Update the session ID for future messages in this conversation
+      if (data.session_id) {
+        currentSessionId = data.session_id;
+      }
+      
       addLumiMsg(data.answer);
     } catch(e){
       removeTyping();
@@ -297,6 +307,7 @@
   function useStarter(el){ document.getElementById('queryInput').value=el.textContent; autoResize(); document.getElementById('queryInput').focus(); }
 
   function clearChat(){
+    currentSessionId = null; // Reset session ID for a fresh start
     document.getElementById('messages').innerHTML='';
     const welcome=document.createElement('div'); welcome.className='welcome'; welcome.id='welcome';
     welcome.innerHTML=`<div class="welcome-avatar">✨</div><h2 id="welcomeTitle">Fresh start!</h2><p>Ready for a new conversation. What's on your mind?</p><div class="starters"><div class="starter" onclick="useStarter(this)">How was your day?</div><div class="starter" onclick="useStarter(this)">Tell me something interesting</div><div class="starter" onclick="useStarter(this)">I need advice on something</div><div class="starter" onclick="useStarter(this)">What can you help me with?</div></div>`;

@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta 
 from fastapi.exceptions import HTTPException
-from requests import session
 from src.auth.schema import CreateUserModel, LoginModel, VerifyOTPModel
 from src.rag_db.main import get_session
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -10,7 +9,7 @@ from src.auth.services import UserService
 from src.mail import mail, create_message
 from src.auth.schema import EmailModel
 from src.auth.utils import verify_password, create_access_token
-from src.auth.dependencies import AccessTokenBearer, RefreshTokenBearer, RoleChecker, get_current_user, RoleChecker
+from src.auth.dependencies import AccessTokenBearer, RefreshTokenBearer, RoleChecker, get_current_user
 from src.rag_db.redis import add_jti_to_blocklist
 from src.app.services.config import Config
 
@@ -68,7 +67,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
                 letter-spacing: 2px;
                 color: #fff;
             }}
-            .brand span {{ color: #00d4ff; }}
+            .brand span {{ color: #e8725a; }}
             .status {{
                 font-family: 'Share Tech Mono', monospace;
                 font-size: 10px;
@@ -92,7 +91,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
             }}
             .otp-box {{
                 background: #0d1526;
-                border: 2px solid #00d4ff;
+                border: 2px solid #e8725a;
                 padding: 24px;
                 text-align: center;
                 margin: 32px 0;
@@ -103,7 +102,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
                 font-size: 36px;
                 font-weight: 900;
                 letter-spacing: 8px;
-                color: #00d4ff;
+                color: #e8725a;
                 word-break: break-all;
             }}
             .timer {{
@@ -132,14 +131,14 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
     <body>
         <div class="container">
             <div class="header">
-                <div class="brand">ORBI<span>TAL</span></div>
-                <div class="status">MISSION ACCESS SYSTEM</div>
+                <div class="brand">LUMI<span>.</span></div>
+                <div class="status">AI COMPANION ACCESS</div>
             </div>
             
             <h1>Welcome, {user_data.first_name}!</h1>
             
             <div class="message">
-                Your ORBITAL account has been created successfully. Your mission access code is below:
+                Your LUMI account has been created successfully. Your access code is below:
             </div>
             
             <div class="otp-box">
@@ -147,7 +146,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
             </div>
             
             <div class="message">
-                Enter this code to verify your account and gain full access to the ORBITAL platform.
+                Enter this code to verify your account and gain full access to the LUMI platform.
             </div>
             
             <div class="timer">
@@ -156,7 +155,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
             
             <div class="footer">
                 <p class="warning">⚠️ Security Notice:</p>
-                <p>Do not share this code with anyone. ORBITAL team members will never ask for your verification code.</p>
+                <p>Do not share this code with anyone. LUMI team members will never ask for your verification code.</p>
                 <p>If you did not create this account, please ignore this email.</p>
             </div>
         </div>
@@ -167,7 +166,7 @@ async def create_user(user_data: CreateUserModel, session: AsyncSession = Depend
     print(user_data.email)
     message = create_message(
         recipients=[user_data.email],
-        subject="Verify your ORBITAL account",
+        subject="Verify your LUMI account",
         body=html
     )
     await mail.send_message(message)
@@ -243,7 +242,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
                 letter-spacing: 2px;
                 color: #fff;
             }}
-            .brand span {{ color: #00d4ff; }}
+            .brand span {{ color: #e8725a; }}
             .status {{
                 font-family: 'Share Tech Mono', monospace;
                 font-size: 10px;
@@ -267,7 +266,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
             }}
             .otp-box {{
                 background: #0d1526;
-                border: 2px solid #00d4ff;
+                border: 2px solid #e8725a;
                 padding: 24px;
                 text-align: center;
                 margin: 32px 0;
@@ -278,7 +277,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
                 font-size: 36px;
                 font-weight: 900;
                 letter-spacing: 8px;
-                color: #00d4ff;
+                color: #e8725a;
                 word-break: break-all;
             }}
             .timer {{
@@ -307,14 +306,14 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
     <body>
         <div class="container">
             <div class="header">
-                <div class="brand">ORBI<span>TAL</span></div>
-                <div class="status">MISSION ACCESS SYSTEM</div>
+                <div class="brand">LUMI<span>.</span></div>
+                <div class="status">AI COMPANION ACCESS</div>
             </div>
             
             <h1>Welcome, {user_exists.first_name}!</h1>
             
             <div class="message">
-                Your ORBITAL account has been created successfully. Your mission access code is below:
+                Your LUMI account verification code is below:
             </div>
             
             <div class="otp-box">
@@ -322,7 +321,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
             </div>
             
             <div class="message">
-                Enter this code to verify your account and gain full access to the ORBITAL platform.
+                Enter this code to verify your account and gain full access to the LUMI platform.
             </div>
             
             <div class="timer">
@@ -331,7 +330,7 @@ async def resend_otp(email_data: EmailModel, session: AsyncSession = Depends(get
             
             <div class="footer">
                 <p class="warning">⚠️ Security Notice:</p>
-                <p>Do not share this code with anyone. ORBITAL team members will never ask for your verification code.</p>
+                <p>Do not share this code with anyone. LUMI team members will never ask for your verification code.</p>
                 <p>If you did not create this account, please ignore this email.</p>
             </div>
         </div>
@@ -400,7 +399,7 @@ async def get_new_access_token(token_detail:dict=Depends(RefreshTokenBearer())):
 
 
 @auth_router.get("/me")
-async def get_current_user(user_details=Depends(get_current_user), _:bool = Depends(role_checker)):
+async def read_current_user(user_details=Depends(get_current_user), _:bool = Depends(role_checker)):
     return user_details
 
 
