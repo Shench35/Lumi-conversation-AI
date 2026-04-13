@@ -23,27 +23,32 @@ app = FastAPI(
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={"detail": exc.detail},
-        headers={"Access-Control-Allow-Origin": "http://127.0.0.1:5500"},
+        content={"detail": exc.detail}
     )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",  # ← this is the one hitting your backend
-    ],  # VS Code Live Server default
+    allow_origins=["*"], # Allow all origins for debugging
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Serve frontend static files
+# We'll serve from the root so links like "login.html" work naturally
 app.mount("/static", StaticFiles(directory="src/frontend"), name="static")
 
 @app.get("/")
 async def landing():
     return FileResponse("src/frontend/index.html")
+
+# Fix: Serve specific frontend pages at the root level so relative links work
+@app.get("/{page_name}.html")
+async def get_page(page_name: str):
+    file_path = f"src/frontend/{page_name}.html"
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Page not found")
 
 app.include_router(main_route) 
 app.include_router(auth_router) 
