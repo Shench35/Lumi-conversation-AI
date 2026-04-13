@@ -54,18 +54,15 @@ from langchain_core.documents import Document
 from typing import List, Any
 
 class RAGPipeLine():
-    def __init__(self):
-        self.embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        self.persist_directory = "./db/chroma"
-
     async def web_doc_inventory(self):
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
 
-        async with httpx.AsyncClient(headers=headers, timeout=10.0) as client:
-            response = await client.get("https://shench35.github.io/Generative-AI-Conversation/")
-            
+        response = requests.get(
+            "https://shench35.github.io/Generative-AI-Conversation/",
+            headers=headers
+            )
         soup = BeautifulSoup(response.text, "html.parser")
 
         # Remove noise
@@ -74,7 +71,7 @@ class RAGPipeLine():
 
         text = soup.get_text(separator="\n\n", strip=True)
 
-        # Wrap in a LangChain Document
+        # Wrap in a LangChain Document so the rest of your pipeline stays the same
         docs = [Document(page_content=text, metadata={"source": "https://shench35.github.io/Generative-AI-Conversation/"})]
         return docs
 
@@ -83,30 +80,16 @@ class RAGPipeLine():
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         splits = text_splitter.split_documents(docs)
         return splits
+    
 
     async def embedding_docs_and_retrival(self, splits: Any):
-        # Check if the collection already exists and has data
-        vectorstore = Chroma(
-            persist_directory=self.persist_directory,
-            embedding_function=self.embedding_model
-        )
-        
-        # Simple check: if collection is empty, then index. 
-        # In a real production app, you'd likely have a separate 'sync' task.
-        existing_count = len(vectorstore.get()['ids'])
-        
-        if existing_count == 0:
-            print("Vector store is empty. Indexing documents...")
-            vectorstore = Chroma.from_documents(
-                documents=splits,
-                embedding=self.embedding_model,
-                persist_directory=self.persist_directory
-            )
-        else:
-            print(f"Vector store already contains {existing_count} documents. Skipping re-indexing.")
+        # EMBEDDING THE TEXTS
+        embd = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        vectorstore = Chroma.from_documents(documents=splits,embedding=embd)
 
-        # RETRIEVAL 
+        # RETRIVAL 
         retriever = vectorstore.as_retriever()
+
         return retriever
 
     async def prompt_template(self):
