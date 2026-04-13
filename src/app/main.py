@@ -24,7 +24,16 @@ client = ollama.Client(host=ollama_host)
 access_token_bearer = AccessTokenBearer()
 role_checker = RoleChecker(["admin", "user"])
 service = UserService()
-rag_pipeline = RAGPipeLine()
+
+# Lazy loading for RAG Pipeline to prevent startup timeout on Render
+_rag_pipeline = None
+
+def get_rag_pipeline():
+    global _rag_pipeline
+    if _rag_pipeline is None:
+        print("Initializing RAG Pipeline (Loading models)...")
+        _rag_pipeline = RAGPipeLine()
+    return _rag_pipeline
 
 
 
@@ -71,19 +80,22 @@ async def query(
     session_id = request.session_id if request.session_id else uuid.uuid4()
 
     try:
-       docs = await rag_pipeline.web_doc_inventory()
+       # Lazy get the pipeline
+       pipeline = get_rag_pipeline()
+       
+       docs = await pipeline.web_doc_inventory()
        print("Done with docs")
 
-       splits = await rag_pipeline.chunking(docs)
+       splits = await pipeline.chunking(docs)
        print("Done with spliting")
 
-       retriever = await rag_pipeline.embedding_docs_and_retrival(splits)
+       retriever = await pipeline.embedding_docs_and_retrival(splits)
        print("Done with retriever")
 
-       prompt, llm = await rag_pipeline.prompt_template()
+       prompt, llm = await pipeline.prompt_template()
        print("Done with prompt and llm")
 
-       answer = await rag_pipeline.rag_chain(docs, retriever, prompt, llm, q)
+       answer = await pipeline.rag_chain(docs, retriever, prompt, llm, q)
        print(answer)
        
        # Store in UserQuery table
