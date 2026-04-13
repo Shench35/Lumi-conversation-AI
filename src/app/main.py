@@ -8,7 +8,7 @@ from src.app.services.schemas import QueryRequest
 
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.rag_db.main import get_session
-from src.rag_db.models import User, QueryLog
+from src.rag_db.models import User, QueryLog, UserQuery
 from src.auth.dependencies import AccessTokenBearer
 from src.auth.dependencies import RoleChecker
 from sqlmodel import select
@@ -16,6 +16,7 @@ from fastapi.exceptions import HTTPException
 from fastapi import status
 from src.auth.services import UserService
 from src.app.RAG_System.pipeline import RAGPipeLine
+import uuid
 
 
 main_route = APIRouter(prefix="/app", tags=["App"])
@@ -69,6 +70,9 @@ async def query(
     if not q:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Query cannot be empty.")
 
+    # Use provided session_id or create a new one
+    session_id = request.session_id if request.session_id else uuid.uuid4()
+
     try:
        docs = await rag_pipeline.web_doc_inventory()
        print("Done with docs")
@@ -84,16 +88,22 @@ async def query(
 
        answer = await rag_pipeline.rag_chain(docs, retriever, prompt, llm, q)
        print(answer)
-       log = QueryLog(
-           user_id=user.uid,
+       
+       # Store in UserQuery table
+       user_query = UserQuery(
+           uid=user.uid,
+           session_id=session_id,
            query=q,
            response=answer
-           )
-       session.add(log)
+       )
+       session.add(user_query)
        await session.commit()
+       
        return {
-           "answer": answer
-             }
+           "answer": answer,
+           "session_id": session_id,
+           "qid": user_query.qid
+       }
 
     except HTTPException:
         raise
