@@ -49,23 +49,12 @@ class RAGPipeLine():
 
     async def embedding_docs_and_retrival(self, splits: Any):
         from langchain_community.vectorstores import Chroma
-        vectorstore = Chroma(
-            persist_directory=self.persist_directory,
-            embedding_function=self.embedding_model
+        print("Initializing Vector Store (In-Memory)...")
+        # For simplicity and to avoid disk issues on Render, we'll index in-memory for now
+        vectorstore = Chroma.from_documents(
+            documents=splits,
+            embedding=self.embedding_model
         )
-        
-        try:
-            existing_count = len(vectorstore.get()['ids'])
-        except Exception:
-            existing_count = 0
-        
-        if existing_count == 0:
-            print("Vector store is empty. Indexing documents...")
-            vectorstore = Chroma.from_documents(
-                documents=splits,
-                embedding=self.embedding_model,
-                persist_directory=self.persist_directory
-            )
         
         return vectorstore.as_retriever()
 
