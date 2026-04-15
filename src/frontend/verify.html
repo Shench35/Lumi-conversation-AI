@@ -198,7 +198,7 @@
       }
 
       if(!res.ok){ document.getElementById('errorMsg').textContent=data.detail; btn.disabled=false; btn.textContent='Resend code'; return; }
-      secondsLeft=600; document.getElementById('timerDisplay').classList.remove('expiring');
+      secondsLeft=120; document.getElementById('timerDisplay').classList.remove('expiring');
       document.getElementById('timerCount').textContent='10:00'; document.getElementById('submitBtn').disabled=false;
       document.getElementById('btnText').textContent='Verify my account'; document.getElementById('errorMsg').textContent='';
       boxes.forEach(b=>{b.value='';b.classList.remove('filled');}); boxes[0].focus();

@@ -50,7 +50,7 @@ class UserService:
     async def generate_otp(self, email: str) -> str:
         """Generate OTP and store it in Redis with 10-minute expiry"""
         otp = str(random.randint(100000, 999999))
-        await save_otp(email, otp, expiry_seconds=600)  # 10 minutes
+        await save_otp(email, otp, expiry_seconds=120)  # 3 minutes
         return otp
 
     async def verify_otp_input(self, email: str, user_otp: str) -> tuple[bool, str]:
